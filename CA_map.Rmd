@@ -1,0 +1,29 @@
+---
+title: "Practice_code"
+author: "Kacie Ring"
+date: "2/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+#install.packages('here')
+library(here)
+#install.packages('sf')
+library(tmap)
+library(sf) 
+```
+
+```{r}
+CA_map <- read_sf(here('shape_file','s7cc79.shp'))
+
+CA_map_transform <- st_transform(CA_map, 3309)
+
+ggplot(data = CA_map_transform) +
+  geom_sf()
+
+
+```
+
