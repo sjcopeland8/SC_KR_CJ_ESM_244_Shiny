@@ -14,16 +14,64 @@ library(here)
 #install.packages('sf')
 library(tmap)
 library(sf) 
+library(maptools)
+#install.packages("rgdal")
+library(rgdal)
+#install.packages("raster")
+library(raster)
+#install.packages("maps")
+library(maps)
+#install.packages("mapdata")
+library(mapdata)
+#install.packages("ggmap")
+library(ggmap)
+#install.packages("marmap")
+library(marmap)
+#install.packages("lattice")
+library(lattice)
+#install.packages("arcgisbinding")
+
+library(shapefiles)
+install.packages("sp")
+library(sp)
+library(googleway)
+library(cowplot)
+library(ggplot2)
+theme_set(theme_bw())
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggspatial)
+
+```
+
+
+
+```{r}
+
+#read in CA eco regions map 
+
+#import shp file 
+eco_10 <- st_read(here('eco_regions_shape_file','CA_Ecoregionsv10.shp'))
+View(eco_10)
+
+eco_mapv10 <- read_sf(here('eco_regions_shape_file','CA_Ecoregionsv10.shp'))
+
+head(eco_mapv10, n=4)
+
+#set crs (aka tell R where the coordinates are)
+st_crs(eco_mapv10)<- 3309
+
+CA_ecomap_transform10 <- st_transform(eco_mapv10, 3309)
+
+#lot the map
+ggplot(data = CA_ecomap_transform10) +
+  geom_sf()
+
+
 ```
 
 ```{r}
-CA_map <- read_sf(here('shape_file','s7cc79.shp'))
-
-CA_map_transform <- st_transform(CA_map, 3309)
-
-ggplot(data = CA_map_transform) +
-  geom_sf()
-
 
 ```
 
