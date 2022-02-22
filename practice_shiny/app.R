@@ -26,6 +26,11 @@ ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions
                           sidebarLayout(
                             sidebarPanel("Widget 3 Here"),
                             mainPanel("Graph/Map 3 Here")
+                          )),
+                 tabPanel("Tick Thing 4",
+                          sidebarLayout(
+                            sidebarPanel("Widget 4 Here"),
+                            mainPanel("Graph/Map 4 Here")
                           ))
 )
 
