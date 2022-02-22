@@ -66,12 +66,14 @@ ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions
                           sidebarLayout(
                             # create sidebar panel that will house widgets
                             sidebarPanel("Time of Year and Exclosure Effects",
+                                         # add checkbox group
                                          checkboxGroupInput(inputId = "year",
                                                             label = "Select Month",
                                                             choices = c("2007",
                                                                         "2008",
                                                                         "2009"),
                                                             selected = "2007"),
+                                         # add radio button group
                                          radioButtons(inputId = "species",
                                                       label = "Select Exclusion Treatment",
                                                       choices = c("Chinstrap",
