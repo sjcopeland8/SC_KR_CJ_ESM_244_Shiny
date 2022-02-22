@@ -62,10 +62,22 @@ ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions
                             mainPanel("Graph/Map 2 Here")
                           )),
                  # third tab
-                 tabPanel("Tejon Ticks",
+                 tabPanel("Tejon Ticks: Climate and Host Change",
                           sidebarLayout(
                             # create sidebar panel that will house widgets
-                            sidebarPanel("Widget 3 Here"),
+                            sidebarPanel("Time of Year and Exclosure Effects",
+                                         checkboxGroupInput(inputId = "year",
+                                                            label = "Select Month",
+                                                            choices = c("2007",
+                                                                        "2008",
+                                                                        "2009"),
+                                                            selected = "2007"),
+                                         radioButtons(inputId = "species",
+                                                      label = "Select Exclusion Treatment",
+                                                      choices = c("Chinstrap",
+                                                                  "Gentoo",
+                                                                  "Adelie"),
+                                                      selected = "Chinstrap")),
                             # create main panel for output
                             mainPanel("Graph/Map 3 Here")
                           ))
