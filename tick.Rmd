@@ -351,4 +351,7 @@ reserve_SB <- incidence %>%
 
 
 
+<<<<<<< HEAD
+>>>>>>> 4f4bd50c840e9edc2976652a7858ebd12d6e220c
+=======
 >>>>>>> 4f4bd50c840e9edc2976652a7858ebd12d6e220c
