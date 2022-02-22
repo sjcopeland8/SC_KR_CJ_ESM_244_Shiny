@@ -14,6 +14,16 @@ library(bslib)
 
 #penguins <- penguins
 
+## Tejon Data and Organization
+tejon_tick_2 <- read_csv("Tejon_MixedModels_Dataset.csv")
+
+Full_no0 <- tejon_tick_2[which(tejon_tick_2$log_total != 0),]
+
+#tejon_tick_app_2 <- Full_no0 %>%
+  #select(year, month, site, plot, total, deoc, ipac, deva, other) %>%
+  #group_by(across(all_of(group_cols))) %>%
+  #summarize(n = n())
+
 # Create the user interface:
 # using navbarPage() to setup tabs
 ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
@@ -100,17 +110,25 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
 server <- function(input, output) {
 
   ## Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
-  tejon_tick_app_2 <- reactive({
-    tejon_tick_app_2 %>%
-      filter(month == input$month) %>%
-      filter(plot == input$plot)
-  }) #end tejon reactive
+  tejon_tick_app_3 <- reactive({
+    Full_no0 %>%
+      select(year, month, site, plot, total, deoc, ipac, deva, other) %>%
+      group_by(across(all_of(group_cols))) %>%
+      summarize(n = n()) %>%
+      filter(month == input$month)# end tejon reactive
+  })
+
+  #tejon_tick_app_2 <- reactive({
+    #tejon_tick_app_2 %>%
+      #filter(month == input$month) #%>%
+      #filter(plot == input$plot)
+
+#end tejon reactive
 
   output$tejon_tick <- renderPlot({
-    ggplot(data = tejon_tick_app_2(), aes(x = month, y = n))+
+    ggplot(data = tejon_tick_app_3(), aes(x = plot, y = n))+
       geom_bar(stat = "identity")+
-      theme_bw()
-  })
+      theme_bw()})
 
 }
 
