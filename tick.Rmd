@@ -12,8 +12,6 @@ library(tidyverse)
 library(here)
 library(broom)
 library(dplyr)
-install.packages("reshape2")
-library(reshape2)
 
 # Spatial data packages
 library(sf)
@@ -24,9 +22,6 @@ tick <- read_csv(here("tickBb", "I.pacificus_data.csv"))
 View(tick)
 
 Bb <- read_csv(here("tickBb", "Bb.csv"))
-
-install.packages("plotly")
-library(plotly)
 
 ```
 
@@ -222,45 +217,6 @@ ggplot(data = ca_subset_sf) +
 reserve_ticks <- read_csv("occurence_points_ucnrs.csv")
 View(reserve_ticks)
 ggplot(reserve_ticks, aes())
-
-```
-
-
-Human Lyme disease incidence graphs 
-
-```{r}
-
-lyme <- read_csv("human_lyme_incidence.csv")
-
-
-str(lyme)
-#fileter counties with Lyme prevalence 
-
-pos_county_time <- lyme %>% 
-  select(-last_col())%>%
-   filter(!row_number() %in% c(59:61)) %>%
-  select(-TOTAL) %>%
-    select(-last_col())
-
-
-long<- pos_county_time  %>% 
- pivot_longer(!County,
-    names_to = "year",
-    values_to = "incidence") %>% 
-    group_by(County) 
- 
-ggplot(long, aes(year, incidence, group = 1, color = County)) +
-         geom_point() +
-         geom_line() +
-         labs(x = "Year", y = "Lyme Disease Incidence") 
-              #title = "Motor vehicle emissions in Baltimore")
-
-tick_graph <- 
-  ggplot(data = long, aes(x = year, y = incidence, group = County)) +
-  geom_line(aes(color = County)) +
-  theme_minimal()
-
-ggplotly(tick_graph)
 
 ```
 
