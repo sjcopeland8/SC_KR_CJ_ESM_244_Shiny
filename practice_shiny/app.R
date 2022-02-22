@@ -44,12 +44,14 @@ ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions
                           sidebarLayout(
                             # create sidebar panel that will house widgets
                             sidebarPanel("Tick Lifestage Map",
+                                         # add radio button group
                                          radioButtons(inputId = "species",
                                                       label = "Select Life Stage",
                                                       choices = c("Chinstrap",
                                                                   "Gentoo",
                                                                   "Adelie"),
                                                       selected = "Chinstrap"),
+                                         # add checkbox group
                                          checkboxGroupInput(inputId = "island",
                                                             label = "Select Counties",
                                                             choices = c("Torgersen",
