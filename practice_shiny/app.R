@@ -10,6 +10,7 @@
 library(shiny)
 library(tidyverse)
 library(palmerpenguins)
+library(lubridate)
 
 penguins <- penguins
 
@@ -17,12 +18,13 @@ penguins <- penguins
 ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions in California",
                  tabPanel("Human Lyme Disease",
                           sidebarLayout(
-                            sidebarPanel("Widget 1 Here",
+                            sidebarPanel("Human Lyme Disease Occurence by Year",
                                          sliderInput(inputId = "year",
                                                      label = "Select Years",
                                                      min = 2007,
                                                      max = 2009,
-                                                     value = c(2007, 2009))),
+                                                     value = c(2007, 2009),
+                                                     timeFormat = TRUE)),
                             mainPanel("Graph/Map 1 Here")
                           )),
                  tabPanel("Life Stage Map",
