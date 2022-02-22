@@ -10,13 +10,15 @@
 library(shiny)
 library(tidyverse)
 library(palmerpenguins)
-library(lubridate)
+library(bslib)
 
-penguins <- penguins
+#penguins <- penguins
 
 # Create the user interface:
 # using navbarPage() to setup tabs
-ui <- navbarPage("Tick, Tick, Boom: Tick population (Family Acari) distributions in California",
+ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
+                 # title
+                 "Tick, Tick, Boom: Tick population (Family Acari) distributions in California",
                  # first tab
                  tabPanel("Human Lyme Disease",
                           sidebarLayout(
