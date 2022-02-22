@@ -69,26 +69,50 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
                             # create sidebar panel that will house widgets
                             sidebarPanel("Time of Year and Exclosure Effects",
                                          # add checkbox group
-                                         checkboxGroupInput(inputId = "year",
+                                         checkboxGroupInput(inputId = "month",
                                                             label = "Select Month",
-                                                            choices = c("2007",
-                                                                        "2008",
-                                                                        "2009"),
-                                                            selected = "2007"),
-                                         # add radio button group
-                                         radioButtons(inputId = "species",
-                                                      label = "Select Exclusion Treatment",
-                                                      choices = c("Chinstrap",
-                                                                  "Gentoo",
-                                                                  "Adelie"),
-                                                      selected = "Chinstrap")),
+                                                            choices = c("January",
+                                                                        "February",
+                                                                        "March",
+                                                                        "April",
+                                                                        "May",
+                                                                        "June",
+                                                                        "July",
+                                                                        "August",
+                                                                        "September",
+                                                                        "October",
+                                                                        "November",
+                                                                        "December"),
+                                                            selected = NULL),
+                                         # add checkbox group #2
+                                         checkboxGroupInput(inputId = "plot",
+                                                            label = "Select Exclusion Treatment",
+                                                            choices = c("Total", "Partial", "Control"),
+                                                            selected = NULL)
+),
                             # create main panel for output
-                            mainPanel("Graph/Map 3 Here")
+                            mainPanel("Graph/Map 3 Here",
+                                      plotOutput(outputId = tejon_tick))
                           ))
 )
 
 # Create the server function:
-server <- function(input, output) {}
+server <- function(input, output) {
+
+  ## Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
+  tejon_tick_app_2 <- reactive({
+    tejon_tick_app_2 %>%
+      filter(month == input$month) %>%
+      filter(plot == input$plot)
+  }) #end tejon reactive
+
+  output$tejon_tick <- renderPlot({
+    ggplot(data = tejon_tick_app_2(), aes(x = month, y = n))+
+      geom_bar(stat = "identity")+
+      theme_bw()
+  })
+
+}
 
 # Combine them into an app:
 shinyApp(ui = ui, server = server)
