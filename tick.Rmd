@@ -188,7 +188,7 @@ ca_subset_sf <- ca_counties_sf %>% #sf = simple features object
 head(ca_subset_sf) ### WARN AGAINST View()
 
 
-ca_subset_sf <- inner_join(ca_subset_sf, tick_bb)
+
 
 ```
 
@@ -217,13 +217,6 @@ ggplot(data = ca_subset_sf) +
 
 ```
 
-```{r}
-
-reserve_ticks <- read_csv("occurence_points_ucnrs.csv")
-View(reserve_ticks)
-ggplot(reserve_ticks, aes())
-
-```
 
 
 Human Lyme disease incidence graphs 
@@ -232,6 +225,7 @@ Human Lyme disease incidence graphs
 
 lyme <- read_csv("human_lyme_incidence.csv")
 
+View(lyme)
 
 str(lyme)
 #fileter counties with Lyme prevalence 
@@ -258,9 +252,105 @@ ggplot(long, aes(year, incidence, group = 1, color = County)) +
 tick_graph <- 
   ggplot(data = long, aes(x = year, y = incidence, group = County)) +
   geom_line(aes(color = County)) +
+  labs(x = "Year", y = "Lyme Disease Incidence", title = "Human Lyme Disease Incidence 2011-2020") 
   theme_minimal()
 
 ggplotly(tick_graph)
 
 ```
+
+```{r}
+
+top_pos_county_time <- lyme %>% 
+  select(-last_col())%>%
+  filter(!row_number() %in% c(59:61)) %>%
+  filter(TOTAL > 30) %>%
+  select(-TOTAL) %>%
+  select(-last_col())
+
+
+long_top<- top_pos_county_time  %>% 
+ pivot_longer(!County,
+    names_to = "year",
+    values_to = "incidence") %>% 
+    group_by(County) 
+ 
+ggplot(long_top, aes(year, incidence, group = 1, color = County)) +
+         geom_point() +
+         geom_line() +
+         labs(x = "Year", y = "Lyme Disease Incidence") 
+              #title = "Motor vehicle emissions in Baltimore")
+
+tick_graph_top <- 
+  ggplot(data = long_top, aes(x = year, y = incidence, group = County)) +
+  geom_line(aes(color = County)) +
+  labs(x = "Year", y = "Lyme Disease Incidence", title = "Human Lyme Disease Incidence 2011-2020 - Top 5 CA Counties") 
+  theme_minimal()
+
+ggplotly(tick_graph_top)
+
+```
+
+
+```{r}
+
+ca_subset_sf
+
+incidence_map <- lyme %>% 
+  select(-last_col())%>%
+   filter(!row_number() %in% c(59:61))  %>% 
+  rename(incidence = "Incidence/100000")
+
+
+incidence <- inner_join(ca_subset_sf, incidence_map)
+
+
+
+
+ggplot(data = incidence) +
+  geom_sf(aes(fill = incidence), color = "white", size = 0.1) +
+  scale_fill_gradientn(colors = c("snow2","darkolivegreen1","chartreuse2","chartreuse4")) +
+  theme_minimal() +
+  labs(fill = "Human Lyme incidence per 100000 individuals")
+
+
+```
+
+```{r}
+# Set the viewing mode to "interactive":
+tmap_mode(mode = "view")
+
+# Then make a map (with the polygon fill color updated by variable 'land_area', updating the color palette to "BuGn"), then add another shape layer for the sesbania records (added as dots):
+tm_shape(incidence) +
+  tm_fill("incidence", palette = "BuGn") 
+
+```
+
+```
+
+
+```{r}
+
+reserve_ticks <- read_csv("occurence_points_ucnrs.csv")
+View(reserve_ticks)
+
+reserve_ticks$reserve <- as.factor(reserve_ticks$reserve)
+
+SB_reserves <- reserve_ticks %>%
+  filter(reserve == "Sedgewick", "Santa_Cruz_Island", "Coil_Oil_Point")
+
+ca_crs <-st_crs(ca_subset_sf)
+
+reserves_shp <- st_as_sf(reserve_ticks, coords = c("lat", "lon"), crs = ca_crs)
+
+
+reserve_SB <- incidence %>%
+  filter(County == "Santa Barbara")
+
+
+
+
+```
+
+
 
