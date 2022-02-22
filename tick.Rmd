@@ -12,8 +12,6 @@ library(tidyverse)
 library(here)
 library(broom)
 library(dplyr)
-install.packages("reshape2")
-library(reshape2)
 
 # Spatial data packages
 library(sf)
@@ -24,9 +22,6 @@ tick <- read_csv(here("tickBb", "I.pacificus_data.csv"))
 View(tick)
 
 Bb <- read_csv(here("tickBb", "Bb.csv"))
-
-install.packages("plotly")
-library(plotly)
 
 ```
 
@@ -218,6 +213,8 @@ ggplot(data = ca_subset_sf) +
 ```
 
 
+<<<<<<< HEAD
+=======
 
 Human Lyme disease incidence graphs 
 
