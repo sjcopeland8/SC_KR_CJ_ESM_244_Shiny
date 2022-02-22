@@ -101,7 +101,7 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
 )
 
 # Create the server function:
-server <- function(input, output) {
+server <- function(input, output) ({
   ##Pt.1 Lyme incidence
   lyme_incidence <- reactive({
     long %>%
@@ -114,6 +114,7 @@ server <- function(input, output) {
       geom_line(aes(color = County)) +
       labs(x = "Year", y = "Lyme Disease Incidence", title = "Human Lyme Disease Incidence 2011-2020") +
     theme_minimal()
+})
 
 
 #Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
@@ -129,7 +130,7 @@ server <- function(input, output) {
      theme_bw()
   })
 
-}
+})
 
 # Combine them into an app:
 shinyApp(ui = ui, server = server)
