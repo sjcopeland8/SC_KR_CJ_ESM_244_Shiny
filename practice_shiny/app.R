@@ -25,6 +25,17 @@ tick_graph <-
 theme_minimal()
 
 
+## Tejon Data and Organization
+tejon_tick_2 <- read_csv("Tejon_MixedModels_Dataset.csv")
+
+Full_no0 <- tejon_tick_2[which(tejon_tick_2$log_total != 0),]
+
+#tejon_tick_app_2 <- Full_no0 %>%
+  #select(year, month, site, plot, total, deoc, ipac, deva, other) %>%
+  #group_by(across(all_of(group_cols))) %>%
+  #summarize(n = n())
+
+
 # Create the user interface:
 # using navbarPage() to setup tabs
 ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
@@ -34,16 +45,15 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
                  tabPanel("Human Lyme Disease",
                           sidebarLayout(
                             # create sidebar panel that will house widgets
-                            sidebarPanel("Human Lyme Disease Occurence by Year and County",
+                            sidebarPanel("Double-click on counties in the figure legend to view county-level Lyme disease incidence"),
                                          # add slider input
                                          # add checkbox group
-                                         checkboxGroupInput(inputId = "County",
-                                                            label = "Select County",
-                                                            choices = c("Sierra" ,"Sacramento","Santa Barbara" , "Calaveras" ,"Ventura", "Los Angeles","Sonoma", "San Francisco","Marin" ,"Mariposa","Lassen","Napa","Kings","San Diego","Placer", "San Francisco", "Marin","Mariposa",  "Lassen", "Napa", "Shasta","Monterey", "Trinity","Mendocino","Inyo","Mono","Tuolumne","Solano", "San Bernardino", "Contra Costa" ,"Alpine","El Dorado","Yolo", "Yuba", "San Benito", "Humboldt", "Riverside","Kern","Colusa" ,"Del Norte" ,"Modoc", "Fresno", "Madera", "Santa Clara", "Tehama" ,"San Joaquin" ,"Alameda","Nevada","Butte", "Merced", "Tulare" , "Stanislaus","Orange","Imperial","Sutter", "Amador", "Lake" ,"Plumas" ,"San Mateo", "Siskiyou", "Santa Cruz", "Glenn", "San Luis Obispo"
-                                                            ))),
+                                         #checkboxGroupInput(inputId = "County",
+                                                            #label = "Select County",
+                                                            #choices = c("Sierra" ,"Sacramento","Santa Barbara" , "Calaveras" ,"Ventura", "Los Angeles","Sonoma", "San Francisco","Marin" ,"Mariposa","Lassen","Napa","Kings","San Diego","Placer", "San Francisco", "Marin","Mariposa",  "Lassen", "Napa", "Shasta","Monterey", "Trinity","Mendocino","Inyo","Mono","Tuolumne","Solano", "San Bernardino", "Contra Costa" ,"Alpine","El Dorado","Yolo", "Yuba", "San Benito", "Humboldt", "Riverside","Kern","Colusa" ,"Del Norte" ,"Modoc", "Fresno", "Madera", "Santa Clara", "Tehama" ,"San Joaquin" ,"Alameda","Nevada","Butte", "Merced", "Tulare" , "Stanislaus","Orange","Imperial","Sutter", "Amador", "Lake" ,"Plumas" ,"San Mateo", "Siskiyou", "Santa Cruz", "Glenn", "San Luis Obispo"
+                                                           # ))),
                             # create main panel for output
-                            mainPanel("Graph/Map 1 Here",
-                                      plotlyOutput(outputId = "lyme_plot"))
+                            mainPanel(plotlyOutput(outputId = "lyme_plot"))
                           )),
                  # second tab
                  tabPanel("Life Stage Map",
@@ -117,18 +127,28 @@ server <- function(input, output) ({
 })
 
 
-#Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
- tejon_tick_app_2 <- reactive({
-   tejon_tick_app_2 %>%
-     filter(month == input$month) %>%
-     filter(plot == input$plot)
-  }) #end tejon reactive
 
- output$tejon_tick <- renderPlot({
-    ggplot(data = tejon_tick_app_2(), aes(x = month, y = n))+
-      geom_bar(stat = "identity")+
-     theme_bw()
+  ## Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
+  tejon_tick_app_3 <- reactive({
+    Full_no0 %>%
+      select(year, month, site, plot, total, deoc, ipac, deva, other) %>%
+      group_by(across(all_of(group_cols))) %>%
+      summarize(n = n()) %>%
+      filter(month == input$month)# end tejon reactive
   })
+
+  #tejon_tick_app_2 <- reactive({
+  #tejon_tick_app_2 %>%
+  #filter(month == input$month) #%>%
+  #filter(plot == input$plot)
+
+  #end tejon reactive
+
+  output$tejon_tick <- renderPlot({
+    ggplot(data = tejon_tick_app_3(), aes(x = plot, y = n))+
+      geom_bar(stat = "identity")+
+      theme_bw()})
+
 
 })
 
