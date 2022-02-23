@@ -9,11 +9,15 @@
 
 library(shiny)
 library(tidyverse)
-library(palmerpenguins)
+library(here)
+library(broom)
+library(dplyr)
 library(bslib)
 library(plotly)
 #install.packages("ggthemes")
 library(ggthemes)
+library(tmap)
+library(sf)
 
 #penguins <- penguins
 
@@ -24,6 +28,20 @@ tick_graph <-
     labs(x = "Year", y = "Lyme Disease Incidence", title = "Human Lyme Disease Incidence 2011-2020")
 theme_minimal()
 
+ca_counties_sf <- read_sf(here("ca_counties", "CA_Counties_TIGER2016.shp"))
+
+ca_subset_sf <- ca_counties_sf %>% #sf = simple features object
+    janitor::clean_names() %>%
+    select(County= name, land_area = aland) #sf files have a sticky geometry (aka it automatically stays in the object)
+
+lyme <- read_csv("human_lyme_incidence.csv")
+
+incidence_map <- lyme %>%
+    select(-last_col())%>%
+    filter(!row_number() %in% c(59:61))  %>%
+    rename(incidence = "Incidence/100000")
+
+incidence <- inner_join(ca_subset_sf, incidence_map)
 
 ## Tejon Data and Organization
 tejon_tick_2 <- read_csv("Tejon_MixedModels_Dataset.csv")
@@ -55,7 +73,8 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
                               #choices = c("Sierra" ,"Sacramento","Santa Barbara" , "Calaveras" ,"Ventura", "Los Angeles","Sonoma", "San Francisco","Marin" ,"Mariposa","Lassen","Napa","Kings","San Diego","Placer", "San Francisco", "Marin","Mariposa",  "Lassen", "Napa", "Shasta","Monterey", "Trinity","Mendocino","Inyo","Mono","Tuolumne","Solano", "San Bernardino", "Contra Costa" ,"Alpine","El Dorado","Yolo", "Yuba", "San Benito", "Humboldt", "Riverside","Kern","Colusa" ,"Del Norte" ,"Modoc", "Fresno", "Madera", "Santa Clara", "Tehama" ,"San Joaquin" ,"Alameda","Nevada","Butte", "Merced", "Tulare" , "Stanislaus","Orange","Imperial","Sutter", "Amador", "Lake" ,"Plumas" ,"San Mateo", "Siskiyou", "Santa Cruz", "Glenn", "San Luis Obispo"
                               # ))),
                               # create main panel for output
-                              mainPanel(plotlyOutput(outputId = "lyme_plot"))
+                              mainPanel(tmapOutput(outputId = "lyme_map"),
+                                        plotlyOutput(outputId = "lyme_plot"))
                           )),
                  # second tab
                  tabPanel("Life Stage Map",
@@ -119,6 +138,11 @@ server <- function(input, output) ({
         long %>%
             #dplyr::group_by(County)
             dplyr::filter(County %in% input$County)
+    })
+
+    output$lyme_map <- renderTmap({
+        tm_shape(incidence) +
+            tm_fill("incidence", palette = "BuGn",legend.title = "Lyme disease incidence per 100,000 residents" )
     })
 
     output$lyme_plot <- renderPlotly({
