@@ -43,6 +43,14 @@ incidence_map <- lyme %>%
 
 incidence <- inner_join(ca_subset_sf, incidence_map)
 
+#tab 2 incidence data wrangling
+
+tick_stage <- read_csv("tick_life_stage_by_county.csv")
+
+tick_stage_map <- tick_stage %>%
+  select(c(1:5, 8))
+
+life_stage <- inner_join(ca_subset_sf, tick_stage_map)
 ## Tejon Data and Organization
 tejon_tick_2 <- read_csv("Tejon_MixedModels_Dataset.csv")
 
@@ -80,24 +88,25 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
                  tabPanel("Life Stage Map",
                           sidebarLayout(
                               # create sidebar panel that will house widgets
-                              sidebarPanel("Tick Lifestage Map",
+                              sidebarPanel("Adult Tick Distribution and Infection Prevalence"),
                                            # add radio button group
-                                           radioButtons(inputId = "species",
-                                                        label = "Select Life Stage",
-                                                        choices = c("Chinstrap",
-                                                                    "Gentoo",
-                                                                    "Adelie"),
-                                                        selected = "Chinstrap"),
+                                           #radioButtons(inputId = "species",
+                                             #           label = "Select Life Stage",
+                                             #           choices = c("Chinstrap",
+                                                                   # "Gentoo",
+                                                                    #"Adelie"),
+                                              #          selected = "Chinstrap"),
                                            # add checkbox group
-                                           checkboxGroupInput(inputId = "island",
-                                                              label = "Select Counties",
-                                                              choices = c("Torgersen",
-                                                                          "Biscoe",
-                                                                          "Dream"),
-                                                              selected = "Torgersen")),
+                                           #checkboxGroupInput(inputId = "island",
+                                                             # label = "Select Counties",
+                                                              #choices = c("Torgersen",
+                                                                          #"Biscoe",
+                                                                          #"Dream"),
+                                                              #elected = "Torgersen")),
                               # create main panel for output
-                              mainPanel("Graph/Map 2 Here")
-                          )),
+                              mainPanel(tmapOutput(outputId = "tick_map"))
+                 )),
+
                  # third tab
                  tabPanel("Tejon Ticks: Climate and Host Change",
                           sidebarLayout(
@@ -128,8 +137,8 @@ ui <- navbarPage(theme = bs_theme(bootswatch = "flatly"),
                               # create main panel for output
                               mainPanel("Graph/Map 3 Here",
                                         plotOutput(outputId = "tejon_tick"))
-                          ))
-)
+                          )))
+
 
 # Create the server function:
 server <- function(input, output) ({
@@ -152,6 +161,17 @@ server <- function(input, output) ({
             theme_minimal()
     })
 
+    output$tick_map <- renderTmap({
+      tm_shape(life_stage) +
+        tm_fill(col = "Infection_prevalence",
+                palette = "Greens",
+                title = "Adult tick infection prevalence") +
+        tm_bubbles("Adult",
+                   border.col = "black", border.alpha = .5,
+                   style="fixed",
+                   palette="BuGn", contrast=1,
+                   title.size="Adult tick abundace")
+    })
 
     ## Pt 3: Tick Seasonality - I'm not getting this to display and I don't know why
     tejon_tick_app_3 <- reactive({
